@@ -10,18 +10,38 @@ mongoose.connect(process.env.MONGO_URI, {
 }).then(async () => {
   console.log('✅ Conectado a MongoDB');
 
-  const existente = await Usuario.findOne({ correo: 'admin@fedegan.com' });
-
-  if (existente) {
-    console.log('⚠️ El usuario admin@fedegan.com ya existe');
-  } else {
-    const hash = await bcrypt.hash('admin123', 10);
-    await Usuario.create({
+  const usuarios = [
+    {
       correo: 'admin@fedegan.com',
-      contraseña: hash,
+      contraseña: 'admin123',
       rol: 'admin'
-    });
-    console.log('✅ Usuario creado con éxito');
+    },
+    {
+      correo: 'tecnico@fedegan.com',
+      contraseña: 'tecnico123',
+      rol: 'tecnico'
+    },
+    {
+      correo: 'vacunador@fedegan.com',
+      contraseña: 'vacunador123',
+      rol: 'vacunador'
+    }
+  ];
+
+  for (const user of usuarios) {
+    const existente = await Usuario.findOne({ correo: user.correo });
+
+    if (existente) {
+      console.log(`⚠️ El usuario ${user.correo} ya existe`);
+    } else {
+      const hash = await bcrypt.hash(user.contraseña, 10);
+      await Usuario.create({
+        correo: user.correo,
+        contraseña: hash,
+        rol: user.rol
+      });
+      console.log(`✅ Usuario ${user.correo} creado con éxito`);
+    }
   }
 
   mongoose.disconnect();
