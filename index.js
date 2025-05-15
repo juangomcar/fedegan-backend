@@ -3,6 +3,8 @@ const { verificarToken, soloRol } = require('./middlewares/auth');
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
+const cors = require('cors');
+app.use(cors());
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const Usuario = require('./models/usuario');
