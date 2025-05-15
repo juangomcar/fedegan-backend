@@ -1,16 +1,30 @@
+require('dotenv').config(); // Para leer variables de entorno
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const Usuario = require('./models/usuario');
 
-mongoose.connect('mongodb+srv://jfgomez4224:CSC7uefpFm81b6Ak@cluster42.ku93b5j.mongodb.net/fedegan?retryWrites=true&w=majority').then(async () => {
-  const hash = await bcrypt.hash('admin123', 10);
+// Conexión segura desde .env
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(async () => {
+  console.log('✅ Conectado a MongoDB');
 
-  await Usuario.create({
-    correo: 'admin@fedegan.com',
-    contraseña: hash,
-    rol: 'admin'
-  });
+  const existente = await Usuario.findOne({ correo: 'admin@fedegan.com' });
 
-  console.log('✅ Usuario creado');
-  process.exit();
+  if (existente) {
+    console.log('⚠️ El usuario admin@fedegan.com ya existe');
+  } else {
+    const hash = await bcrypt.hash('admin123', 10);
+    await Usuario.create({
+      correo: 'admin@fedegan.com',
+      contraseña: hash,
+      rol: 'admin'
+    });
+    console.log('✅ Usuario creado con éxito');
+  }
+
+  mongoose.disconnect();
+}).catch((err) => {
+  console.error('❌ Error de conexión:', err);
 });
