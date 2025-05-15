@@ -20,8 +20,14 @@ mongoose.connect(process.env.MONGO_URI)
 const Animal = mongoose.model('Animal', {
   nombre: String,
   finca: String,
-  vacunado: Boolean
+  vacunado: Boolean,
+  ubicacion: String,
+  fecha: String,
+  tipo_vacuna: String,
+  lote_vacuna: String,
+  observaciones: String
 });
+
 
 // 🟢 Ruta para login
 app.post('/login', async (req, res) => {
